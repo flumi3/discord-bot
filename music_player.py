@@ -1,9 +1,7 @@
 import asyncio
 import discord
 import yt_dlp as youtube_dl
-from discord import VoiceState
 from discord.ext import commands
-from discord.ext.commands import Context
 
 discord.FFmpegPCMAudio("/usr/bin/ffmpeg")
 
@@ -15,15 +13,24 @@ class MusicPlayer(commands.Cog):
 
     @commands.command(name="play", help="Plays a song")
     async def play(self, ctx, *, query: str):
-        if not ctx.message.author.voice:
+        if ctx.message.author.voice:
+            author_voice_channel = ctx.message.author.voice.channel
+            if not ctx.voice_client:
+                await author_voice_channel.connect()
+            elif ctx.voice_client.channel != author_voice_channel:
+                await ctx.send("The bot is already connected to a different voice channel.")
+                return
+        else:
             await ctx.send("You are not connected to a voice channel. Please connect to a voice channel first.")
             return
-        else:
-            voice_channel = ctx.message.author.voice.channel
-            if not ctx.voice_client:
-                await voice_channel.connect()
 
-        self.queue.append(query)
+        # Add track(s) to queue
+        if "open.spotify.com" in query:
+            tracks = self.handle_spotify_link(query)
+            self.queue.extend(tracks)
+        else:
+            self.queue.append(query)
+
         if not ctx.voice_client.is_playing():
             await self.play_music(ctx)
         else:
@@ -64,7 +71,7 @@ class MusicPlayer(commands.Cog):
         else:
             await ctx.send("The bot is not playing anything at the moment.")
 
-    async def play_music(self, ctx):
+    async def play_music(self, ctx) -> None:
         while len(self.queue) > 0:
             # Play next song in queue
             async with ctx.typing():
@@ -77,6 +84,17 @@ class MusicPlayer(commands.Cog):
                 await asyncio.sleep(1)
 
             self.queue.pop(0)
+
+    def handle_spotify_link(self, link) -> str | list[str]:
+        # TODO: Implement Spotify link handling
+        if "track" in link:
+            # TODO: get information about the track and return the title
+            return [""]
+        elif "playlist" in link:
+            # TODO: get all tracks from the playlist and return the titles
+            return [""]
+        else:
+            return ""
 
 
 class YouTubeDownloader(discord.PCMVolumeTransformer):
@@ -101,13 +119,13 @@ class YouTubeDownloader(discord.PCMVolumeTransformer):
             "ignoreerrors": True,
             "source_address": "0.0.0.0",
         }
-        ffmpeg_options = {"options": "-vn"}
+        ffmpeg_options = {"options": "-vn -reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5"}
 
         data = await loop.run_in_executor(
             None, lambda: youtube_dl.YoutubeDL(format_options).extract_info(query, download=False)
         )
-        if "entries" in data:
-            data = data["entries"][0]
-        url = data["url"]
+        if "entries" in data:  # type: ignore
+            data = data["entries"][0]  # type: ignore
+        url = data["url"]  # type: ignore
 
         return cls(discord.FFmpegPCMAudio(url, **ffmpeg_options), data=data)
