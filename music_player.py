@@ -1,7 +1,9 @@
 import asyncio
 import discord
 import yt_dlp as youtube_dl
+from discord import VoiceState
 from discord.ext import commands
+from discord.ext.commands import Context
 
 discord.FFmpegPCMAudio("/usr/bin/ffmpeg")
 
@@ -9,20 +11,23 @@ discord.FFmpegPCMAudio("/usr/bin/ffmpeg")
 class MusicPlayer(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+        self.queue = list()
 
     @commands.command(name="play", help="Plays a song")
-    async def play(self, ctx, *, query):
+    async def play(self, ctx, *, query: str):
         if not ctx.message.author.voice:
             await ctx.send("You are not connected to a voice channel. Please connect to a voice channel first.")
             return
         else:
             voice_channel = ctx.message.author.voice.channel
-            await voice_channel.connect()
+            if not ctx.voice_client:
+                await voice_channel.connect()
 
-        async with ctx.typing():
-            player = await YouTubeDownloader.from_query(query, loop=self.bot.loop)
-            ctx.voice_client.play(player, after=lambda e: print("Player error: %s" % e) if e else None)
-        await ctx.send(f"**Now playing**: {player.title}")
+        self.queue.append(query)
+        if not ctx.voice_client.is_playing():
+            await self.play_music(ctx)
+        else:
+            await ctx.send(f"**Song added to queue**")
 
     @commands.command(name="pause", help="Pauses the currently playing song")
     async def pause(self, ctx):
@@ -48,6 +53,31 @@ class MusicPlayer(commands.Cog):
         else:
             await ctx.send("The bot is not playing anything at the moment.")
 
+    @commands.command(name="skip", help="Skips the currently playing song")
+    async def skip(self, ctx):
+        voice_client = ctx.message.guild.voice_client
+        if voice_client.is_playing():
+            voice_client.stop()
+            self.queue.pop(0)
+            if len(self.queue) > 0:
+                await self.play_music(ctx)
+        else:
+            await ctx.send("The bot is not playing anything at the moment.")
+
+    async def play_music(self, ctx):
+        while len(self.queue) > 0:
+            # Play next song in queue
+            async with ctx.typing():
+                player = await YouTubeDownloader.from_query(self.queue[0], loop=self.bot.loop)
+                ctx.voice_client.play(player, after=lambda e: print("Player error: %s" % e) if e else None)
+            await ctx.send(f"**Now playing**: {player.title}")
+
+            # Wait for the song to finish playing
+            while ctx.voice_client.is_playing():
+                await asyncio.sleep(1)
+
+            self.queue.pop(0)
+
 
 class YouTubeDownloader(discord.PCMVolumeTransformer):
     def __init__(self, source, *, data, volume=0.5):
@@ -65,6 +95,10 @@ class YouTubeDownloader(discord.PCMVolumeTransformer):
             "noplaylist": True,
             "quiet": True,
             "default_search": "auto",
+            "nocheckcertificate": True,
+            "logtostderr": False,
+            "nowarnings": True,
+            "ignoreerrors": True,
             "source_address": "0.0.0.0",
         }
         ffmpeg_options = {"options": "-vn"}
