@@ -4,6 +4,14 @@
 - Python
 - FFmpeg installed
 
+## Getting Started
+1. Create .env file with the following content:
+    ```
+    DISCORD_TOKEN = <your discord token>
+    SPOTIFY_CLIENT_ID = <your spotify client id>
+    SPOTIFY_CLIENT_SECRET = <your spotify client secret>
+    ```
+
 ## TODO:
 - run on free oracle vm#
 

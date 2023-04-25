@@ -1,7 +1,18 @@
+import os
 import asyncio
 import discord
+import spotipy
 import yt_dlp as youtube_dl
+
+from dotenv import load_dotenv
 from discord.ext import commands
+from spotipy.oauth2 import SpotifyClientCredentials
+
+load_dotenv()
+SPOTIFY_CLIENT_ID = os.getenv("SPOTIFY_CLIENT_ID")
+SPOTIFY_CLIENT_SECRET = os.getenv("SPOTIFY_CLIENT_SECRET")
+assert SPOTIFY_CLIENT_ID
+assert SPOTIFY_CLIENT_SECRET
 
 discord.FFmpegPCMAudio("/usr/bin/ffmpeg")
 
@@ -10,6 +21,7 @@ class MusicPlayer(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.queue = list()
+        self.spotify_helper = SpotifyHelper()
 
     @commands.command(name="play", help="Plays a song")
     async def play(self, ctx, *, query: str):
@@ -26,8 +38,9 @@ class MusicPlayer(commands.Cog):
 
         # Add track(s) to queue
         if "open.spotify.com" in query:
-            tracks = self.handle_spotify_link(query)
-            self.queue.extend(tracks)
+            tracks = self.spotify_helper.get_tracks(query)
+            if tracks:
+                self.queue.extend(tracks)
         else:
             self.queue.append(query)
 
@@ -85,16 +98,34 @@ class MusicPlayer(commands.Cog):
 
             self.queue.pop(0)
 
-    def handle_spotify_link(self, link) -> str | list[str]:
-        # TODO: Implement Spotify link handling
+
+class SpotifyHelper:
+    def __init__(self):
+        client_credentials_manager = SpotifyClientCredentials(
+            client_id=SPOTIFY_CLIENT_ID, client_secret=SPOTIFY_CLIENT_SECRET
+        )
+        self.spotify = spotipy.Spotify(client_credentials_manager=client_credentials_manager)
+
+    def get_tracks(self, link: str) -> list[str]:
         if "track" in link:
-            # TODO: get information about the track and return the title
-            return [""]
+            track_info = self.spotify.track(link)
+            if track_info:
+                name = track_info["name"]
+                artist = track_info["artists"][0]["name"]
+                track = f"{name} {artist}"
+                return [track]
         elif "playlist" in link:
-            # TODO: get all tracks from the playlist and return the titles
-            return [""]
-        else:
-            return ""
+            results = self.spotify.playlist_items(link)
+            print(results)
+            if results:
+                track_list = []
+                for item in results["items"]:
+                    track = item["track"]
+                    name = track["name"]
+                    artist = track["artists"][0]["name"]
+                    track_list.append(f"{name} {artist}")
+                return track_list
+        return []
 
 
 class YouTubeDownloader(discord.PCMVolumeTransformer):
