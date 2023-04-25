@@ -31,10 +31,12 @@ class MusicPlayer(commands.Cog):
             if not ctx.voice_client:
                 await author_voice_channel.connect()
             elif ctx.voice_client.channel != author_voice_channel:
-                await ctx.send("The bot is already connected to a different voice channel.")
+                await ctx.send("The bot is already connected to a different voice channel.", silent=True)
                 return
         else:
-            await ctx.send("You are not connected to a voice channel. Please connect to a voice channel first.")
+            await ctx.send(
+                "You are not connected to a voice channel. Please connect to a voice channel first.", silent=True
+            )
             return
 
         # Add track(s) to queue
@@ -48,7 +50,7 @@ class MusicPlayer(commands.Cog):
         if not ctx.voice_client.is_playing():
             await self.play_music(ctx)
         else:
-            await ctx.send(f"**Song added to queue**")
+            await ctx.send(f"**Song added to queue**", silent=True)
 
     @commands.command(name="pause", help="Pauses the currently playing song")
     async def pause(self, ctx):
@@ -56,7 +58,7 @@ class MusicPlayer(commands.Cog):
         if voice_client.is_playing():
             await voice_client.pause()
         else:
-            await ctx.send("The bot is not playing anything at the moment.")
+            await ctx.send("The bot is not playing anything at the moment.", silent=True)
 
     @commands.command(name="resume", help="Resumes a currently paused song")
     async def resume(self, ctx):
@@ -72,7 +74,7 @@ class MusicPlayer(commands.Cog):
         if voice_client.is_playing():
             await voice_client.stop()
         else:
-            await ctx.send("The bot is not playing anything at the moment.")
+            await ctx.send("The bot is not playing anything at the moment.", silent=True)
 
     @commands.command(name="skip", help="Skips the currently playing song")
     async def skip(self, ctx):
@@ -83,7 +85,7 @@ class MusicPlayer(commands.Cog):
             if len(self.queue) > 0:
                 await self.play_music(ctx)
         else:
-            await ctx.send("The bot is not playing anything at the moment.")
+            await ctx.send("Queue is empty", silent=True)
 
     @commands.command("shuffle", help="Shuffles the queue")
     async def shuffle(self, ctx):
@@ -92,9 +94,19 @@ class MusicPlayer(commands.Cog):
             random.shuffle(queue_without_current_song)
             self.queue = [self.queue[0]] + queue_without_current_song
             random.shuffle(self.queue)
-            await ctx.send("**Queue shuffled**")
+            await ctx.send("**Queue shuffled**", silent=True)
         else:
-            await ctx.send("Queue is too short to shuffle")
+            await ctx.send("Queue is too short to shuffle", silent=True)
+
+    @commands.Cog.listener()
+    async def on_voice_state_update(self, member, before, after):
+        """Clears the queue when the bot is no longer in a voice channel.
+
+        TODO: disconnect bot after 5 minutes of inactivity
+        """
+        if member == self.bot.user:
+            if not after.channel:
+                self.queue.clear()
 
     async def play_music(self, ctx) -> None:
         while len(self.queue) > 0:
@@ -102,13 +114,14 @@ class MusicPlayer(commands.Cog):
             async with ctx.typing():
                 player = await YouTubeDownloader.from_query(self.queue[0], loop=self.bot.loop)
                 ctx.voice_client.play(player, after=lambda e: print("Player error: %s" % e) if e else None)
-            await ctx.send(f"**Now playing**: {player.title}")
+            message = await ctx.send(f"**Now playing**: {player.title}", silent=True)
 
             # Wait for the song to finish playing
             while ctx.voice_client.is_playing():
                 await asyncio.sleep(1)
 
             self.queue.pop(0)
+            await message.delete()
 
 
 class SpotifyHelper:
