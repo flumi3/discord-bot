@@ -1,5 +1,6 @@
 import os
 import asyncio
+import random
 import discord
 import spotipy
 import yt_dlp as youtube_dl
@@ -84,6 +85,17 @@ class MusicPlayer(commands.Cog):
         else:
             await ctx.send("The bot is not playing anything at the moment.")
 
+    @commands.command("shuffle", help="Shuffles the queue")
+    async def shuffle(self, ctx):
+        if len(self.queue) > 2:
+            queue_without_current_song = self.queue[1:]
+            random.shuffle(queue_without_current_song)
+            self.queue = [self.queue[0]] + queue_without_current_song
+            random.shuffle(self.queue)
+            await ctx.send("**Queue shuffled**")
+        else:
+            await ctx.send("Queue is too short to shuffle")
+
     async def play_music(self, ctx) -> None:
         while len(self.queue) > 0:
             # Play next song in queue
@@ -116,7 +128,6 @@ class SpotifyHelper:
                 return [track]
         elif "playlist" in link:
             results = self.spotify.playlist_items(link)
-            print(results)
             if results:
                 track_list = []
                 for item in results["items"]:
@@ -150,7 +161,10 @@ class YouTubeDownloader(discord.PCMVolumeTransformer):
             "ignoreerrors": True,
             "source_address": "0.0.0.0",
         }
-        ffmpeg_options = {"options": "-vn -reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5"}
+        ffmpeg_options = {
+            "options": "-vn",
+            "before_options": "-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5",
+        }
 
         data = await loop.run_in_executor(
             None, lambda: youtube_dl.YoutubeDL(format_options).extract_info(query, download=False)
