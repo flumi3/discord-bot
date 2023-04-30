@@ -5,6 +5,8 @@ import discord
 from dotenv import load_dotenv
 from discord.ext import commands
 from music_player import MusicPlayer
+from reddit import Reddit
+from lol_buddy import LolBuddy
 
 load_dotenv()
 TOKEN = os.getenv("DISCORD_TOKEN")
@@ -22,6 +24,8 @@ bot = commands.Bot(command_prefix=("!", "/"), intents=intents)
 
 async def init():
     await bot.add_cog(MusicPlayer(bot))
+    await bot.add_cog(LolBuddy(bot))
+    await bot.add_cog(Reddit(bot))
 
 
 if __name__ == "__main__":

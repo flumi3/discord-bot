@@ -3,3 +3,4 @@ python-dotenv
 yt-dlp
 pynacl
 spotipy
+beautifulsoup4
