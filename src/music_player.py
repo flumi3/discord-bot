@@ -1,5 +1,6 @@
 import os
 import asyncio
+import logging
 import random
 import discord
 import spotipy
@@ -8,6 +9,8 @@ import yt_dlp as youtube_dl
 from dotenv import load_dotenv
 from discord.ext import commands
 from spotipy.oauth2 import SpotifyClientCredentials
+
+logger = logging.getLogger("discord")
 
 load_dotenv()
 SPOTIFY_CLIENT_ID = os.getenv("SPOTIFY_CLIENT_ID")
@@ -30,8 +33,10 @@ class MusicPlayer(commands.Cog):
             author_voice_channel = ctx.message.author.voice.channel
             if not ctx.voice_client:
                 await author_voice_channel.connect()
+                logger.info(f"Bot connected to voice channel '{author_voice_channel}'")
             elif ctx.voice_client.channel != author_voice_channel:
                 await ctx.send("The bot is already connected to a different voice channel.", silent=True)
+                logger.error(f"Bot already connected to voice channel '{ctx.voice_client.channel}'")
                 return
         else:
             await ctx.send(
@@ -44,40 +49,49 @@ class MusicPlayer(commands.Cog):
             tracks = self.spotify_helper.get_tracks(query)
             if tracks:
                 self.queue.extend(tracks)
+                logger.info(f"Added {len(tracks)} tracks to queue")
         else:
             self.queue.append(query)
+            logger.info(f"Added '{query}' to queue")
 
         if not ctx.voice_client.is_playing():
             await self.play_music(ctx)
         else:
-            await ctx.send(f"**Song added to queue**", silent=True)
+            await ctx.send(f"Song added to queue", silent=True)
 
     @commands.command(name="pause", help="Pauses the currently playing song")
     async def pause(self, ctx):
+        logger.info("Attempting to pause player...")
         voice_client = ctx.message.guild.voice_client
         if voice_client.is_playing():
-            await voice_client.pause()
+            voice_client.pause()
         else:
+            logger.error("Player is not playing anything")
             await ctx.send("The bot is not playing anything at the moment.", silent=True)
 
     @commands.command(name="resume", help="Resumes a currently paused song")
     async def resume(self, ctx):
+        logger.info("Attempting to resume player...")
         voice_client = ctx.message.guild.voice_client
         if voice_client.is_paused():
-            await voice_client.resume()
+            voice_client.resume()
         else:
-            await ctx.send("The bot was not playing anything. Use the **play** command to play a song.")
+            logger.error("Bot was not playing anything")
+            await ctx.send("The bot was not playing anything. Use **!play <name_of_song>** to play a song.")
 
     @commands.command("stop", help="Stops playing song and disconnects the bot from voice channel")
     async def stop(self, ctx):
+        logger.info("Attempting to stop player...")
         voice_client = ctx.message.guild.voice_client
         if voice_client.is_playing():
-            await voice_client.stop()
+            voice_client.stop()
         else:
+            logger.error("Player is not playing anything")
             await ctx.send("The bot is not playing anything at the moment.", silent=True)
 
     @commands.command(name="skip", help="Skips the currently playing song")
     async def skip(self, ctx):
+        logger.info("Attempting to skip song...")
         voice_client = ctx.message.guild.voice_client
         if voice_client.is_playing():
             voice_client.stop()
@@ -85,6 +99,7 @@ class MusicPlayer(commands.Cog):
             if len(self.queue) > 0:
                 await self.play_music(ctx)
         else:
+            logger.error("Queue is empty")
             await ctx.send("Queue is empty", silent=True)
 
     @commands.command("shuffle", help="Shuffles the queue")
@@ -109,11 +124,13 @@ class MusicPlayer(commands.Cog):
                 self.queue.clear()
 
     async def play_music(self, ctx) -> None:
+        logger.info("Attempting to play music...")
         while len(self.queue) > 0:
             # Play next song in queue
             async with ctx.typing():
                 player = await YouTubeDownloader.from_query(self.queue[0], loop=self.bot.loop)
                 ctx.voice_client.play(player, after=lambda e: print("Player error: %s" % e) if e else None)
+            logger.debug(f"Playing '{player.title}'")
             message = await ctx.send(f"**Now playing**: {player.title}", silent=True)
 
             # Wait for the song to finish playing
