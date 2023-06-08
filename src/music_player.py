@@ -139,6 +139,8 @@ class MusicPlayer(commands.Cog):
 
             self.queue.pop(0)
             await message.delete()
+            if len(self.queue) == 0:
+                logger.info("Music queue ended")
 
 
 class SpotifyHelper:
