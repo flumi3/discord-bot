@@ -1,3 +1,4 @@
+import os
 import logging
 import requests
 import random
@@ -12,7 +13,10 @@ logger = logging.getLogger("discord")
 class Reddit(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        with open("./data/nsfw_gif_urls.txt", "r") as f:
+
+        # get root dir path
+        root_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        with open(root_dir + "/data/nsfw_gif_urls.txt", "r") as f:
             self.porn_gif_urls = list(eval(f.read()))
 
     @commands.Cog.listener()
