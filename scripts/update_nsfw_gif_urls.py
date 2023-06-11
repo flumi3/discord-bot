@@ -1,0 +1,39 @@
+#!/bin/python3
+
+import sys
+
+# make sure we can import from src
+sys.path.append(".")
+
+from src import reddit
+
+amount = 100
+filename = "./data/nsfw_gif_urls.txt"
+print(f"Updating NSFW gif URL list with {amount} URLs...")
+
+posts = reddit.get_posts(subreddit="PornGifs", amount=amount)
+urls = list()
+error_count = 0
+not_gif_count = 0
+for post in posts:
+    try:
+        url = post["data"]["url"]
+    except KeyError:
+        error_count += 1
+        continue
+    else:
+        if url.endswith(".gif") or url.endswith(".gifv"):
+            urls.append(url)
+        else:
+            not_gif_count += 1
+
+print(f"Queried {len(posts)} posts.")
+print(f"Found {len(urls)} URLs.")
+if error_count > 0:
+    print(f"Failed to get {error_count} URLs.")
+print(f"URLs that were not a gif: {not_gif_count}")
+
+with open(filename, "w") as f:
+    f.write(str(urls))
+
+print(f"Wrote {len(urls)} URLs to {filename}")
