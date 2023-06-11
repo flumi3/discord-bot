@@ -1,5 +1,6 @@
 #!/bin/python3
 
+import os
 import sys
 
 # make sure we can import from src
@@ -33,6 +34,7 @@ if error_count > 0:
     print(f"Failed to get {error_count} URLs.")
 print(f"URLs that were not a gif: {not_gif_count}")
 
+os.makedirs(os.path.dirname(filename), exist_ok=True)
 with open(filename, "w") as f:
     f.write(str(urls))
 
