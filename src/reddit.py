@@ -23,6 +23,7 @@ class Reddit(commands.Cog):
     async def on_message(self, message):
         if message.author == self.bot.user:
             return
+        message.content = message.content.lower()
 
         if message.content.startswith("pls "):
             query = message.content.split("pls ")[1]
