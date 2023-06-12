@@ -2,6 +2,7 @@ import os
 import logging
 import requests
 import random
+import json
 
 from dotenv import load_dotenv
 from discord.ext import commands
@@ -16,8 +17,8 @@ class Reddit(commands.Cog):
 
         # get root dir path
         root_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-        with open(root_dir + "/data/nsfw_gif_urls.txt", "r") as f:
-            self.porn_gif_urls = list(eval(f.read()))
+        with open(root_dir + "/data/p_urls.json", "r") as f:
+            self.porn_gif_urls = json.load(f)
 
     @commands.Cog.listener()
     async def on_message(self, message):
@@ -32,45 +33,6 @@ class Reddit(commands.Cog):
                 random_number = random.randint(0, len(self.porn_gif_urls) - 1)
                 url = self.porn_gif_urls[random_number]
                 await message.channel.send(url)
-
-
-def get_random_post(subreddit: str, timeframe: str = "all") -> str:
-    """Queries a random post from a subreddit.
-
-    Args:
-        subreddit (str): The subreddit to query.
-        timeframe (str, optional): The timeframe to query. Defaults to "all".#
-
-    TODO: fix bug where reddit_video_preview is not always present in the response
-    """
-    try:
-        logger.info(f"Querying Reddit API for random post from r/{subreddit}...")
-        base_url = f"https://www.reddit.com/r/{subreddit}/random.json"
-        params = {"t": timeframe}
-        result = requests.get(base_url, params=params, headers={"User-agent": "DiscordBot"})
-        if result:
-            post = result.json()[0]["data"]["children"][0]
-            # "reddit_video_preview":{
-            #      "bitrate_kbps":800,
-            #      "fallback_url":"https://v.redd.it/h0q7ew1ra94b1/DASH_360.mp4",
-            #      "height":360,
-            #      "width":534,
-            #      "scrubber_media_url":"https://v.redd.it/h0q7ew1ra94b1/DASH_96.mp4",
-            #      "dash_url":"https://v.redd.it/h0q7ew1ra94b1/DASHPlaylist.mpd",
-            #      "duration":7,
-            #      "hls_url":"https://v.redd.it/h0q7ew1ra94b1/HLSPlaylist.m3u8",
-            #      "is_gif":true,
-            #      "transcoding_status":"completed"
-            #   }
-            url = post["data"]["preview"]["reddit_video_preview"]["fallback_url"]
-            print(url)
-            logger.info(f"Found post: {url}")
-            return url
-        else:
-            return ""
-    except:
-        logger.error(f"Failed to query Reddit API for random post from r/{subreddit}.")
-        return ""
 
 
 def get_posts(subreddit: str, sort: str = "top", timeframe: str = "all", amount: int = 100) -> list:
