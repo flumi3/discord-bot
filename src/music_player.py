@@ -31,6 +31,9 @@ class MusicPlayer(commands.Cog):
 
     @commands.command(name="play", help="Plays a song")
     async def play(self, ctx, *, query: str):
+        logger.info(f"User command: !play {query}")
+
+        # Connect to voice channel
         if ctx.message.author.voice:
             author_voice_channel = ctx.message.author.voice.channel
             if not ctx.voice_client:
@@ -47,23 +50,29 @@ class MusicPlayer(commands.Cog):
             return
 
         # Add track(s) to queue
+        tracks = list()
         if "open.spotify.com" in query:
             tracks = self.spotify.get_tracks(query)
             if tracks:
                 self.queue.extend(tracks)
                 logger.info(f"Added {len(tracks)} tracks to queue")
         else:
+            tracks.append(query)
             self.queue.append(query)
             logger.info(f"Added '{query}' to queue")
 
+        # Play music
         if not ctx.voice_client.is_playing():
             await self.play_music(ctx)
         else:
-            await ctx.send(f"Song added to queue", silent=True)
+            if len(tracks) == 1:
+                await ctx.send(f"Added to queue: {tracks[0]}", silent=True)
+            elif len(self.queue) > 1:
+                await ctx.send(f"Added {len(tracks)} tracks to queue", silent=True)
 
     @commands.command(name="pause", help="Pauses the currently playing song")
     async def pause(self, ctx):
-        logger.info("Attempting to pause player...")
+        logger.info("User command: !pause")
         voice_client = ctx.message.guild.voice_client
         if voice_client.is_playing():
             voice_client.pause()
@@ -73,7 +82,7 @@ class MusicPlayer(commands.Cog):
 
     @commands.command(name="resume", help="Resumes a currently paused song")
     async def resume(self, ctx):
-        logger.info("Attempting to resume player...")
+        logger.info("User command: !resume")
         voice_client = ctx.message.guild.voice_client
         if voice_client.is_paused():
             voice_client.resume()
@@ -83,7 +92,7 @@ class MusicPlayer(commands.Cog):
 
     @commands.command("stop", help="Stops playing song and disconnects the bot from voice channel")
     async def stop(self, ctx):
-        logger.info("Attempting to stop player...")
+        logger.info("User command: !stop")
         voice_client = ctx.message.guild.voice_client
         if voice_client.is_playing():
             voice_client.stop()
@@ -93,7 +102,7 @@ class MusicPlayer(commands.Cog):
 
     @commands.command(name="skip", help="Skips the currently playing song")
     async def skip(self, ctx):
-        logger.info("Attempting to skip song...")
+        logger.info("User command: !skip")
         voice_client = ctx.message.guild.voice_client
         if voice_client.is_playing():
             voice_client.stop()
@@ -174,7 +183,7 @@ class Spotify:
                 track_info = response.json()
                 name = track_info["name"]
                 artist = track_info["artists"][0]["name"]
-                track = f"{name} {artist}"
+                track = f"{artist} - {name}"
                 track_list.append(track)
             elif response.status_code == 401:
                 logger.warning("Access token expired. Logging in again...")
@@ -190,7 +199,7 @@ class Spotify:
                     track = item["track"]
                     name = track["name"]
                     artist = track["artists"][0]["name"]
-                    track_list.append(f"{name} {artist}")
+                    track_list.append(f"{artist} - {name}")
             elif response.status_code == 401:
                 logger.warning("Access token expired. Logging in again...")
                 self.login()
