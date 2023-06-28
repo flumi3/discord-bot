@@ -1,8 +1,10 @@
+import base64
 import os
 import asyncio
 import logging
 import random
 import discord
+import requests
 import spotipy
 import yt_dlp as youtube_dl
 
@@ -25,7 +27,7 @@ class MusicPlayer(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.queue = list()
-        self.spotify_helper = SpotifyHelper()
+        self.spotify = Spotify()
 
     @commands.command(name="play", help="Plays a song")
     async def play(self, ctx, *, query: str):
@@ -46,7 +48,7 @@ class MusicPlayer(commands.Cog):
 
         # Add track(s) to queue
         if "open.spotify.com" in query:
-            tracks = self.spotify_helper.get_tracks(query)
+            tracks = self.spotify.get_tracks(query)
             if tracks:
                 self.queue.extend(tracks)
                 logger.info(f"Added {len(tracks)} tracks to queue")
@@ -143,32 +145,57 @@ class MusicPlayer(commands.Cog):
                 logger.info("Music queue ended")
 
 
-class SpotifyHelper:
+class Spotify:
     def __init__(self):
-        client_credentials_manager = SpotifyClientCredentials(
-            client_id=SPOTIFY_CLIENT_ID, client_secret=SPOTIFY_CLIENT_SECRET
-        )
-        self.spotify = spotipy.Spotify(client_credentials_manager=client_credentials_manager)
+        self.access_token = ""
+        self.login()
+
+    def login(self):
+        logger.info("Logging in to Spotify...")
+        auth_string = base64.b64encode((f"{SPOTIFY_CLIENT_ID}:{SPOTIFY_CLIENT_SECRET}").encode()).decode()
+        headers = {"Authorization": f"Basic {auth_string}"}
+        data = {"grant_type": "client_credentials"}
+        response = requests.post("https://accounts.spotify.com/api/token", headers=headers, data=data)
+        if response.status_code == 200:
+            self.access_token = response.json()["access_token"]
+            logger.info("Spotify login successful")
+        else:
+            logger.error("Spotify login failed")
+            logger.debug(response.json())
 
     def get_tracks(self, link: str) -> list[str]:
+        track_list = list()
         if "track" in link:
-            track_info = self.spotify.track(link)
-            if track_info:
+            track_id = link.split("/")[-1]
+            logger.info(f"Getting info on track with ID {track_id}...")
+            url = f"https://api.spotify.com/v1/tracks/{track_id}"
+            response = requests.get(url, headers={"Authorization": f"Bearer {self.access_token}"})
+            if response.status_code == 200:
+                track_info = response.json()
                 name = track_info["name"]
                 artist = track_info["artists"][0]["name"]
                 track = f"{name} {artist}"
-                return [track]
+                track_list.append(track)
+            elif response.status_code == 401:
+                logger.warning("Access token expired. Logging in again...")
+                self.login()
+                return self.get_tracks(link)
         elif "playlist" in link:
-            results = self.spotify.playlist_items(link)
-            if results:
-                track_list = []
-                for item in results["items"]:
+            playlist_id = link.split("/")[-1]
+            logger.info(f"Getting info on playlist with ID {playlist_id}...")
+            url = f"https://api.spotify.com/v1/playlists/{playlist_id}"
+            response = requests.get(url, headers={"Authorization": f"Bearer {self.access_token}"})
+            if response.status_code == 200:
+                for item in response.json()["tracks"]["items"]:
                     track = item["track"]
                     name = track["name"]
                     artist = track["artists"][0]["name"]
                     track_list.append(f"{name} {artist}")
-                return track_list
-        return []
+            elif response.status_code == 401:
+                logger.warning("Access token expired. Logging in again...")
+                self.login()
+                return self.get_tracks(link)
+        return track_list
 
 
 class YouTubeDownloader(discord.PCMVolumeTransformer):
@@ -205,4 +232,4 @@ class YouTubeDownloader(discord.PCMVolumeTransformer):
             data = data["entries"][0]  # type: ignore
         url = data["url"]  # type: ignore
 
-        return cls(discord.FFmpegPCMAudio(url, **ffmpeg_options), data=data)
+        return cls(discord.FFmpegPCMAudio(url, **ffmpeg_options), data=data)  # type: ignore
