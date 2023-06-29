@@ -9,7 +9,7 @@ sys.path.append(".")
 
 from src import reddit
 
-amount = 100
+amount = 2000
 filename = "./data/p_urls.json"
 print(f"[+] Updating NSFW gif URL list with {amount} URLs...")
 
