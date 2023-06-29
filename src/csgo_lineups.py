@@ -1,6 +1,7 @@
 import logging
 import discord
 import json
+import os
 
 from dotenv import load_dotenv
 from discord.ext import commands
@@ -15,7 +16,9 @@ class CsgoLineups(commands.Cog):
         self.lineups = self.load_lineups()
 
     def load_lineups(self):
-        with open("data/csgo-lineups.json", "r") as f:
+        # get root dir path
+        root_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        with open(root_dir + "/data/csgo-lineups.json", "r") as f:
             return json.load(f)
 
     @commands.command(name="lineups", help="TODO")
