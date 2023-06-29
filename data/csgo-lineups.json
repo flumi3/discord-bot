@@ -55,10 +55,18 @@
     },
     "inferno": {
         "ct": {
-            "b": {
+            "a": [
+                {
+                    "description": "Smoke - Minipit and Pit from CT Arch (Retake)",
+                    "url": "https://giant.gfycat.com/PeskyDelayedHuia.mp4"
+                }
+            ],
+            "b": [
+                {
                 "description": "Flash - Banana from CT",
                 "url": "https://giant.gfycat.com/CandidQuestionableBirdofparadise.mp4"
-            }
+                }
+            ]
         },
         "t": {
             "a": [
@@ -100,6 +108,63 @@
                 {
                     "description": "Smoke - B Site from Ruins",
                     "url": "https://giant.gfycat.com/ArtisticEarlyAmericanquarterhorse.mp4"
+                }
+            ]
+        }
+    },
+    "vertigo": {
+        "ct": {},
+        "t": {
+            "a": [
+                {
+                    "description": "Smoke - Bomb Site Left from Ramp",
+                    "url": "https://giant.gfycat.com/SecondaryWeeklyGoldfish.mp4"
+                },
+                {
+                    "description": "Smoke - Bomb Site Right from Ramp",
+                    "url": "https://giant.gfycat.com/BoldBarrenKiwi.mp4"
+                }
+            ]
+        }
+    },
+    "dust": {
+        "ct": {
+            "a": [
+                {
+                    "description": "Flash - Long from Cross",
+                    "url": "https://giant.gfycat.com/CapitalWarmheartedAgouti.mp4"
+                }
+            ]
+        },
+        "t": {
+            "a": [
+                {
+                    "description": "Smoke - Cross Smoke from Long",
+                    "url": "https://giant.gfycat.com/MiserableFlashyDamselfly.mp4"
+                },
+                {
+                    "description": "Molly - Car from Long",
+                    "url": "https://giant.gfycat.com/NextCloseGossamerwingedbutterfly.mp4"
+                },
+                {
+                    "description": "Flash - Site from Short",
+                    "url": "https://giant.gfycat.com/UntidyColossalDanishswedishfarmdog.mp4"
+                }
+            ],
+            "b": [
+                {
+                    "description": "Smoke - Tunnel Entry One-Way from Tunnels",
+                    "url": "https://giant.gfycat.com/MeaslyWebbedKittiwake.mp4"
+                }
+            ],
+            "mid": [
+                {
+                    "description": "Smoke - Catwalk XBox from T Spawn",
+                    "url": "https://giant.gfycat.com/NegligibleSpanishBlackbuck.mp4"
+                },
+                {
+                    "description": "Smoke - CT Spawn from XBox",
+                    "url": "https://giant.gfycat.com/HilariousHighBaldeagle.mp4"
                 }
             ]
         }
