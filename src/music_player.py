@@ -5,12 +5,11 @@ import logging
 import random
 import discord
 import requests
-import spotipy
+import threading
 import yt_dlp as youtube_dl
 
 from dotenv import load_dotenv
 from discord.ext import commands
-from spotipy.oauth2 import SpotifyClientCredentials
 
 logger = logging.getLogger("discord")
 
@@ -38,9 +37,10 @@ class MusicPlayer(commands.Cog):
             author_voice_channel = ctx.message.author.voice.channel
             if not ctx.voice_client:
                 await author_voice_channel.connect()
+                self.ctx = ctx
                 logger.info(f"Bot connected to voice channel '{author_voice_channel}'")
             elif ctx.voice_client.channel != author_voice_channel:
-                await ctx.send("The bot is already connected to a different voice channel.", silent=True)
+                await ctx.send("I am already connected to a different voice channel.", silent=True)
                 logger.error(f"Bot already connected to voice channel '{ctx.voice_client.channel}'")
                 return
         else:
@@ -66,7 +66,7 @@ class MusicPlayer(commands.Cog):
             await self.play_music(ctx)
         else:
             if len(tracks) == 1:
-                await ctx.send(f"Added to queue: {tracks[0]}", silent=True)
+                await ctx.send(f"**Added to queue**: {tracks[0]}", silent=True)
             elif len(self.queue) > 1:
                 await ctx.send(f"Added {len(tracks)} tracks to queue", silent=True)
 
@@ -78,7 +78,7 @@ class MusicPlayer(commands.Cog):
             voice_client.pause()
         else:
             logger.error("Player is not playing anything")
-            await ctx.send("The bot is not playing anything at the moment.", silent=True)
+            await ctx.send("I am is not playing anything at the moment.", silent=True)
 
     @commands.command(name="resume", help="Resumes a currently paused song")
     async def resume(self, ctx):
@@ -88,7 +88,7 @@ class MusicPlayer(commands.Cog):
             voice_client.resume()
         else:
             logger.error("Bot was not playing anything")
-            await ctx.send("The bot was not playing anything. Use **!play <name_of_song>** to play a song.")
+            await ctx.send("I was not playing anything. Use **!play <name_of_song>** to play a song.")
 
     @commands.command("stop", help="Stops playing song and disconnects the bot from voice channel")
     async def stop(self, ctx):
@@ -98,7 +98,7 @@ class MusicPlayer(commands.Cog):
             voice_client.stop()
         else:
             logger.error("Player is not playing anything")
-            await ctx.send("The bot is not playing anything at the moment.", silent=True)
+            await ctx.send("I was not playing anything at the moment.", silent=True)
 
     @commands.command(name="skip", help="Skips the currently playing song")
     async def skip(self, ctx):
@@ -126,13 +126,30 @@ class MusicPlayer(commands.Cog):
 
     @commands.Cog.listener()
     async def on_voice_state_update(self, member, before, after):
-        """Clears the queue when the bot is no longer in a voice channel.
+        inactivity_limit = 10  # minutes of inactivity before bot disconnects
+        inactivity_counter = 0  # in minutes
 
-        TODO: disconnect bot after 5 minutes of inactivity
-        """
-        if member == self.bot.user:
-            if not after.channel:
-                self.queue.clear()
+        # check if bot is connected to a voice channel
+        if not member.id == self.bot.user.id:
+            return
+        elif before.channel is None:
+            voice_client = after.channel.guild.voice_client
+            while voice_client.is_playing() or voice_client.is_paused():
+                await asyncio.sleep(1)
+            else:
+                while True:
+                    await asyncio.sleep(60)
+                    if voice_client.is_playing() and not voice_client.is_paused():
+                        inactivity_counter = 0
+                    else:
+                        inactivity_counter += 1
+                        logger.info(f"Bot inactive since {inactivity_counter} minutes")
+                    if inactivity_counter == inactivity_limit:
+                        logger.info(f"Disconnecting from voice channel '{voice_client.channel}'...")
+                        await voice_client.disconnect()
+                        await self.ctx.send(f"Disconnected from voice channel due to inactivity.", silent=True)
+                        logger.info(f"Disconnected")
+                        break
 
     async def play_music(self, ctx) -> None:
         logger.info("Attempting to play music...")
@@ -145,10 +162,11 @@ class MusicPlayer(commands.Cog):
             message = await ctx.send(f"**Now playing**: {player.title}", silent=True)
 
             # Wait for the song to finish playing
-            while ctx.voice_client.is_playing():
+            while ctx.voice_client and ctx.voice_client.is_playing():
                 await asyncio.sleep(1)
 
-            self.queue.pop(0)
+            if self.queue:
+                self.queue.pop(0)
             await message.delete()
             if len(self.queue) == 0:
                 logger.info("Music queue ended")
