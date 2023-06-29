@@ -40,26 +40,6 @@
     "nuke": {
         "ct": {},
         "t": {
-            "a": [
-                {
-                    "description": "Smoke - CT from T Main",
-                    "url": "https://giant.gfycat.com/CalmTerrificAmbushbug.mp4"
-                },
-                {
-                    "description": "Smoke - Donut from T Main",
-                    "url": "https://giant.gfycat.com/FlatHarmoniousDutchshepherddog.mp4"
-                }
-            ],
-            "b": [
-                {
-                    "description": "Smoke - Back Alley from Outside Doors",
-                    "url": "https://giant.gfycat.com/AcclaimedScrawnyBongo.mp4"
-                },
-                {
-                    "description": "Smoke - Alley from Outside Doors",
-                    "url": "https://giant.gfycat.com/PepperySentimentalChuckwalla.mp4"
-                }
-            ],
             "outside": [
                 {
                     "description": "Smoke - Outside Red from Under Silo (1)",
@@ -72,5 +52,56 @@
             ]
         }
         
+    },
+    "inferno": {
+        "ct": {
+            "b": {
+                "description": "Flash - Banana from CT",
+                "url": "https://giant.gfycat.com/CandidQuestionableBirdofparadise.mp4"
+            }
+        },
+        "t": {
+            "a": [
+                {
+                    "description": "Smoke - Deep Pit from Second Mid",
+                    "url": "https://giant.gfycat.com/MarvelousBigKestrel.mp4"
+                },
+                {
+                    "description": "Smoke - Long from Mid Stairs",
+                    "url": "https://giant.gfycat.com/MediumDelectableCatbird.mp4"
+                }
+            ],
+            "b": [
+                {
+                    "description": "Smoke - Coffins from Banana",
+                    "url": "https://giant.gfycat.com/AlarmingEnormousDodobird.mp4"
+                },
+                {
+                    "description": "Smoke - CT from Banana",
+                    "url": "https://giant.gfycat.com/UncomfortableAdoredGilamonster.mp4"
+                }
+            ]
+        }
+    },
+    "anubis": {
+        "ct": {},
+        "t": {
+            "a": [
+                {
+                    "description": "Smoke - Heaven from Canal",
+                    "url": "https://giant.gfycat.com/PortlyVictoriousAssassinbug.mp4"
+                },
+                {
+                    "description": "Smoke - Plateau from Canal",
+                    "url": "https://giant.gfycat.com/DeadIdleBlowfish.mp4"
+                }
+            ],
+            "b": [
+                {
+                    "description": "Smoke - B Site from Ruins",
+                    "url": "https://giant.gfycat.com/ArtisticEarlyAmericanquarterhorse.mp4"
+                }
+            ]
+        }
     }
 }
