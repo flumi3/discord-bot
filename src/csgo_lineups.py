@@ -13,7 +13,7 @@ load_dotenv()
 class CsgoLineups(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        self.lineups = self.load_lineups()
+        self.lineups_data = self.load_lineups()
 
     def load_lineups(self):
         # get root dir path
@@ -21,12 +21,17 @@ class CsgoLineups(commands.Cog):
         with open(root_dir + "/data/csgo-lineups.json", "r") as f:
             return json.load(f)
 
+    @commands.command(name="jumpthrow", help="TODO")
+    async def jumpthrow(self, ctx):
+        logger.info(f"User command: !jumpthrow")
+        await ctx.send('alias "+jumpthrow" "+jump;-attack"; alias "-jumpthrow" "-jump"; bind alt "+jumpthrow"')
+
     @commands.command(name="lineups", help="TODO")
-    async def pause(self, ctx, map: str):
+    async def lineups(self, ctx, map: str):
         logger.info(f"User command: !lineups {map}")
-        if map in self.lineups:
-            ct_lineups = self.lineups[map]["ct"]
-            t_lineups = self.lineups[map]["t"]
+        if map in self.lineups_data:
+            ct_lineups = self.lineups_data[map]["ct"]
+            t_lineups = self.lineups_data[map]["t"]
             embed = discord.Embed(title=f"Lineups for {map.capitalize()}", color=0x00FF00)
 
             def create_lineup_embeds(site_lineups):
