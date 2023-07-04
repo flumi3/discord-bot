@@ -21,13 +21,18 @@ class CsgoLineups(commands.Cog):
         with open(root_dir + "/data/csgo-lineups.json", "r") as f:
             return json.load(f)
 
-    @commands.command(name="jumpthrow", help="TODO")
+    @commands.command(name="jumpthrow", help="Sends jumpthrow bind command")
     async def jumpthrow(self, ctx):
         logger.info(f"User command: !jumpthrow")
         await ctx.send('alias "+jumpthrow" "+jump;-attack"; alias "-jumpthrow" "-jump"; bind alt "+jumpthrow"')
 
-    @commands.command(name="lineups", help="TODO")
+    @commands.command(name="lineups", help="Sends lineups embed for given map")
     async def lineups(self, ctx, map: str):
+        """Sends CS:GO lineups for the given map
+
+        Args:
+            map (str): Map to get lineups for
+        """
         logger.info(f"User command: !lineups {map}")
         if map in self.lineups_data:
             ct_lineups = self.lineups_data[map]["ct"]

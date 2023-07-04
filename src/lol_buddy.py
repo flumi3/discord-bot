@@ -12,6 +12,11 @@ class LolBuddy(commands.Cog):
 
     @commands.command(name="counter", help="Lists the top 5 counters to a champion")
     async def counter(self, ctx, *, champion_name: str):
+        """Lists the top 5 counters to a champion
+
+        Args:
+            champion_name (str): Name of the champion to get counters for
+        """
         url = f"https://op.gg/champions/{champion_name}"
         headers = {
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36"
