@@ -174,11 +174,14 @@ class MusicPlayer(commands.Cog):
             while ctx.voice_client and ctx.voice_client.is_playing():
                 await asyncio.sleep(1)
 
-            if self.queue:
-                self.queue.pop(0)
-            await message.delete()
-            if len(self.queue) == 0:
-                logger.info("Music queue ended")
+            if ctx.voice_client.is_paused():
+                break
+            else:
+                if self.queue:
+                    self.queue.pop(0)
+                await message.delete()
+                if len(self.queue) == 0:
+                    logger.info("Music queue ended")
 
 
 class Spotify:
