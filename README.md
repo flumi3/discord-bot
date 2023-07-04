@@ -6,17 +6,30 @@
 3. [Getting Started](#getting-started)
 
 # Features
-- [Play Music from YouTube and Spotify](#play-music-from-youtube-and-spotify)
-- [Get CS:GO Lineups](#get-csgo-lineups)
-- [Get Counters for a Leauge of Legend Champion](#get-counter-for-a-leauge-of-legends-champion)
+- [Music Player](#music-player)
+- [CS:GO Buddy](#csgo-buddy)
+- [LoL Buddy](#lol-buddy)
 
-## Play Music from YouTube and Spotify
+## Music Player
 ![](img/cmd_play.png)
 
-## Get CS:GO Lineups
+## CS:GO Buddy
+
+### Get lineups for a map
 ![](img/cmd_lineups.png)
 
-## Get Counter for a Leauge of Legends Champion
+### Get callouts for a map
+![](img/cmd_callouts.png)
+
+### Get the jumpthrow bind that you can paste into your console
+![](img/cmd_jumpthrow.png)
+
+### Get the practice config that you can paste into your console
+![](img/cmd_practice.png)
+
+## LoL Buddy
+
+### Get counter champions for a Leauge of Legends champion
 ![](img/cmd_counter.png)
 
 
