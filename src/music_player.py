@@ -5,7 +5,6 @@ import logging
 import random
 import discord
 import requests
-import threading
 import yt_dlp as youtube_dl
 
 from dotenv import load_dotenv
@@ -30,6 +29,11 @@ class MusicPlayer(commands.Cog):
 
     @commands.command(name="play", help="Plays a song")
     async def play(self, ctx, *, query: str):
+        """Plays a song from YouTube or Spotify
+
+        Args:
+            query (str): Song to play (link or name)
+        """
         logger.info(f"User command: !play {query}")
 
         # Connect to voice channel
@@ -95,7 +99,10 @@ class MusicPlayer(commands.Cog):
         logger.info("User command: !stop")
         voice_client = ctx.message.guild.voice_client
         if voice_client.is_playing():
+            if len(self.queue) > 0:
+                self.queue.clear()
             voice_client.stop()
+            logger.info("Stopped playing music")
         else:
             logger.error("Player is not playing anything")
             await ctx.send("I was not playing anything at the moment.", silent=True)
@@ -126,18 +133,20 @@ class MusicPlayer(commands.Cog):
 
     @commands.Cog.listener()
     async def on_voice_state_update(self, member, before, after):
-        inactivity_limit = 10  # minutes of inactivity before bot disconnects
+        inactivity_limit = 30  # minutes of inactivity before bot disconnects
         inactivity_counter = 0  # in minutes
 
         # check if bot is connected to a voice channel
         if not member.id == self.bot.user.id:
             return
         elif before.channel is None:
+            # wait until bot is inactive
             voice_client = after.channel.guild.voice_client
             while voice_client.is_playing() or voice_client.is_paused():
                 await asyncio.sleep(1)
             else:
                 while True:
+                    # wait until bot is inactive for the specified time
                     await asyncio.sleep(60)
                     if voice_client.is_playing() and not voice_client.is_paused():
                         inactivity_counter = 0
@@ -156,7 +165,7 @@ class MusicPlayer(commands.Cog):
         while len(self.queue) > 0:
             # Play next song in queue
             async with ctx.typing():
-                player = await YouTubeDownloader.from_query(self.queue[0], loop=self.bot.loop)
+                player = await YouTubeDownloader.from_query(self.queue[0], loop=self.bot.loop)  # type: ignore
                 ctx.voice_client.play(player, after=lambda e: print("Player error: %s" % e) if e else None)
             logger.debug(f"Playing '{player.title}'")
             message = await ctx.send(f"**Now playing**: {player.title}", silent=True)
