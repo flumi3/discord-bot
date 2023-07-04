@@ -27,6 +27,14 @@
                 {
                     "description": "Smoke - Alley from Outside Doors",
                     "url": "https://giant.gfycat.com/PepperySentimentalChuckwalla.mp4"
+                },
+                {
+                    "description": "Molly - Dark Entry from Lane",
+                    "url": "https://giant.gfycat.com/PaleEasyBrocketdeer.mp4"
+                },
+                {
+                    "description": "Flash - Wood from Outside Doors",
+                    "url": "https://giant.gfycat.com/ImpureWavyHound.mp4"
                 }
             ],
             "mid": [
@@ -38,8 +46,45 @@
         }
     },
     "nuke": {
-        "ct": {},
+        "ct": {
+            "a": [
+                {
+                    "description": "Smoke - Heaven One-Way from Heaven",
+                    "url": "https://giant.gfycat.com/LiveJoyousBarnacle.mp4"
+                },
+                {
+                    "description": "Flash - Site from Heaven",
+                    "url": "https://giant.gfycat.com/GlassConsiderateBison.mp4"
+                }
+            ],
+            "outside": [
+                {
+                    "description": "Smoke - T Red from CT Red",
+                    "url": "https://giant.gfycat.com/ColorlessBrilliantIchthyosaurs.mp4"
+                }
+            ]
+        },
         "t": {
+            "a": [
+                {
+                    "description": "Flash - Site from Roof",
+                    "url": "https://giant.gfycat.com/AstonishingPotableHorsefly.mp4"
+                },
+                {
+                    "description": "Flash - Outside Hut from Lobby",
+                    "url": "https://giant.gfycat.com/InconsequentialMildAmoeba.mp4"
+                },
+                {
+                    "description": "Flash - Main from Mini",
+                    "url": "https://giant.gfycat.com/WeakHomelyBrownbutterfly.mp4"
+                }
+            ],
+            "b": [
+                {
+                    "description": "Flash - Ramp Area from Trophy",
+                    "url": "https://giant.gfycat.com/ClumsyEnchantingCatbird.mp4"
+                }
+            ],
             "outside": [
                 {
                     "description": "Smoke - Outside Red from Under Silo (1)",
@@ -51,7 +96,6 @@
                 }
             ]
         }
-        
     },
     "inferno": {
         "ct": {
@@ -97,7 +141,7 @@
             "a": [
                 {
                     "description": "Smoke - Heaven from Canal",
-                    "url": "https://giant.gfycat.com/PortlyVictoriousAssassinbug.mp4"
+                    "url": "https://www.csgonades.com/nades/anubis-heaven-smoke-11"
                 },
                 {
                     "description": "Smoke - Plateau from Canal",
@@ -108,6 +152,16 @@
                 {
                     "description": "Smoke - B Site from Ruins",
                     "url": "https://giant.gfycat.com/ArtisticEarlyAmericanquarterhorse.mp4"
+                },
+                {
+                    "description": "Flash - B Site from Ruins",
+                    "url": "https://giant.gfycat.com/GiftedMixedCrocodileskink.mp4"
+                }
+            ],
+            "mid": [
+                {
+                    "description": "Flash - Mid from Ruins",
+                    "url": "https://giant.gfycat.com/HatefulElectricGrayfox.mp4"
                 }
             ]
         }
@@ -133,6 +187,28 @@
                 {
                     "description": "Flash - Long from Cross",
                     "url": "https://giant.gfycat.com/CapitalWarmheartedAgouti.mp4"
+                },
+                {
+                    "description": "Flash - Long Doors from Long Corner",
+                    "url": "https://giant.gfycat.com/MatureBoilingBasil.mp4"
+                },
+                {
+                    "description": "Flash - Site from Short",
+                    "url": "https://giant.gfycat.com/UntidyColossalDanishswedishfarmdog.mp4"
+                }
+            ],
+            "b": [
+                {
+                    "description": "Smoke - Tunnels from B Window (Retake)",
+                    "url": "https://giant.gfycat.com/FeminineLankyAlpineroadguidetigerbeetle.mp4"
+                },
+                {
+                    "description": "Molly - Double Stack from Outside Boxes (Retake)",
+                    "url": "https://giant.gfycat.com/InsecureInsistentIchneumonfly.mp4"
+                },
+                {
+                    "description": "Flash - Site from Mid Doors (Retake)",
+                    "url": "https://giant.gfycat.com/FeminineLankyAlpineroadguidetigerbeetle.mp4"
                 }
             ]
         },
@@ -141,6 +217,10 @@
                 {
                     "description": "Smoke - Cross Smoke from Long",
                     "url": "https://giant.gfycat.com/MiserableFlashyDamselfly.mp4"
+                },
+                {
+                    "description": "Smoke - One-Way Short from Short",
+                    "url": "https://giant.gfycat.com/IdioticCoordinatedBison.mp4"
                 },
                 {
                     "description": "Molly - Car from Long",
@@ -165,6 +245,10 @@
                 {
                     "description": "Smoke - CT Spawn from XBox",
                     "url": "https://giant.gfycat.com/HilariousHighBaldeagle.mp4"
+                },
+                {
+                    "description": "Flash - Mid Doors from XBox",
+                    "url": "https://giant.gfycat.com/CompetentDisastrousAmazondolphin.mp4"
                 }
             ]
         }
