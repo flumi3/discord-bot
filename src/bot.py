@@ -7,7 +7,7 @@ from discord.ext import commands
 from music_player import MusicPlayer
 from reddit import Reddit
 from lol_buddy import LolBuddy
-from csgo_lineups import CsgoLineups
+from csgo_utility import CsgoUtility
 
 load_dotenv()
 TOKEN = os.getenv("DISCORD_TOKEN")
@@ -27,7 +27,7 @@ async def init():
     await bot.add_cog(MusicPlayer(bot))
     await bot.add_cog(LolBuddy(bot))
     await bot.add_cog(Reddit(bot))
-    await bot.add_cog(CsgoLineups(bot))
+    await bot.add_cog(CsgoUtility(bot))
 
 
 if __name__ == "__main__":

@@ -10,10 +10,11 @@ logger = logging.getLogger("discord")
 load_dotenv()
 
 
-class CsgoLineups(commands.Cog):
+class CsgoUtility(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.lineups_data = self.load_lineups()
+        self.callout_maps = self.load_callout_maps()
 
     def load_lineups(self):
         # get root dir path
@@ -21,13 +22,61 @@ class CsgoLineups(commands.Cog):
         with open(root_dir + "/data/csgo-lineups.json", "r") as f:
             return json.load(f)
 
+    def load_callout_maps(self) -> dict:
+        root_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        callouts_dir = root_dir + "/data/csgo-callouts"
+        callouts = dict()
+        for file in os.listdir(callouts_dir):
+            name = file.split(".")[0]
+            path = callouts_dir + "/" + file
+            callouts[name] = path
+        return callouts
+
     @commands.command(name="jumpthrow", help="Sends jumpthrow bind command")
-    async def jumpthrow(self, ctx):
+    async def send_jumpthrow_bind(self, ctx):
         logger.info(f"User command: !jumpthrow")
         await ctx.send('alias "+jumpthrow" "+jump;-attack"; alias "-jumpthrow" "-jump"; bind alt "+jumpthrow"')
 
+    @commands.command(name="practice", help="Sends a practice config that can be pasted into the console")
+    async def send_practice_cfg(self, ctx):
+        logger.info(f"User command: !practice")
+        cfg = """Copy and paste the following config into your console:
+        sv_cheats 1
+        mp_limitteams 0
+        mp_autoteambalance 0
+        mp_freezetime 0
+        mp_roundtime 60
+        mp_roundtime_defuse 60
+        mp_roundtime_hostage 60
+        mp_maxmoney 99999
+        mp_startmoney 99999
+        mp_buytime 9999
+        mp_buy_anywhere 1
+        ammo_grenade_limit_total 5
+        sv_infinite_ammo 1
+        bot_kick
+        mp_warmup_end
+        sv_grenade_trajectory 1
+        sv_grenade_trajectory_time 10
+        sv_showimpacts 1
+        sv_showimpacts_time 10
+        mp_restartgame 1
+        """
+        await ctx.send(cfg)
+
+    @commands.command(name="callouts", help="Sends the callouts for a given CS:GO map")
+    async def send_callouts(self, ctx, map: str):
+        logger.info(f"User command: !callouts")
+        if map == "vertigo":
+            root_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+            callouts_dir = root_dir + "/data/csgo-callouts"
+            await ctx.send(file=discord.File(callouts_dir + "/vertigo-upper.png"))
+            await ctx.send(file=discord.File(callouts_dir + "/vertigo-lower.png"))
+        if map in self.callout_maps:
+            await ctx.send(file=discord.File(self.callout_maps[map]))
+
     @commands.command(name="lineups", help="Sends lineups embed for given map")
-    async def lineups(self, ctx, map: str):
+    async def send_lineups(self, ctx, map: str):
         """Sends CS:GO lineups for the given map
 
         Args:
