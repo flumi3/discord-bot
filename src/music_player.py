@@ -131,6 +131,15 @@ class MusicPlayer(commands.Cog):
         else:
             await ctx.send("Queue is too short to shuffle", silent=True)
 
+    @commands.command("clear", help="Clears the music queue")
+    async def clear_queue(self, ctx):
+        logger.info("User command: !clear")
+        if len(self.queue) > 0:
+            self.queue.clear()
+            await ctx.send("Queue cleared", silent=True)
+        else:
+            await ctx.send("Queue is empty", silent=True)
+
     @commands.Cog.listener()
     async def on_voice_state_update(self, member, before, after):
         inactivity_limit = 30  # minutes of inactivity before bot disconnects
