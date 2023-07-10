@@ -26,6 +26,7 @@ class MusicPlayer(commands.Cog):
         self.bot = bot
         self.queue = list()
         self.spotify = Spotify()
+        self.loop_queue = False
 
     @commands.command(name="play", help="Plays a song")
     async def play(self, ctx, *, query: str):
@@ -113,7 +114,7 @@ class MusicPlayer(commands.Cog):
         voice_client = ctx.message.guild.voice_client
         if voice_client.is_playing():
             voice_client.stop()
-            self.queue.pop(0)
+            self.pop_queue(ctx)
             if len(self.queue) > 0:
                 await self.play_music(ctx)
         else:
@@ -149,6 +150,12 @@ class MusicPlayer(commands.Cog):
                 if i != 0:
                     queue += f"{i}. {track}\n"
             await ctx.send(f"**Queue**:\n{queue}", silent=True)
+
+    @commands.command("loop", help="Loops the current song (or queue if not empty)")
+    async def loop(self, ctx):
+        logger.info("User command: !loop")
+        self.loop_queue = not self.loop_queue
+        await ctx.send(f"**Looping queue**: {self.loop_queue}", silent=True)
 
     @commands.Cog.listener()
     async def on_voice_state_update(self, member, before, after):
@@ -196,11 +203,16 @@ class MusicPlayer(commands.Cog):
             if ctx.voice_client.is_paused():
                 break
             else:
-                if self.queue:
-                    self.queue.pop(0)
+                self.pop_queue(ctx)
                 await message.delete()
                 if len(self.queue) == 0:
                     logger.info("Music queue ended")
+
+    def pop_queue(self, ctx) -> None:
+        if self.queue and len(self.queue) > 0:
+            if self.loop_queue:
+                self.queue.append(self.queue[0])
+            self.queue.pop(0)
 
 
 class Spotify:
