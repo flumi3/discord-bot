@@ -7,6 +7,7 @@ import discord
 import requests
 import yt_dlp as youtube_dl
 
+from bs4 import BeautifulSoup
 from dotenv import load_dotenv
 from discord.ext import commands
 
@@ -66,12 +67,25 @@ class MusicPlayer(commands.Cog):
             self.queue.append(query)
             logger.info(f"Added '{query}' to queue")
 
+        # Easter Egg: Loop if the track is Walmart Yodeling Kid
+        if "youtube.com" in query:
+            track_name = self.get_youtube_title(query)
+        else:
+            track_name = tracks[0]
+        track_name = track_name.lower()
+        if "kid" in track_name and "walmart" in track_name and "edm" in track_name:
+            await ctx.send(
+                ":rotating_light: Walmart yodeling kid detected. Loop enabled :rotating_light:", silent=True
+            )
+            if not self.loop_queue:
+                self.loop_queue = True
+
         # Play music
         if not ctx.voice_client.is_playing():
             await self.play_music(ctx)
         else:
             if len(tracks) == 1:
-                await ctx.send(f"**Added to queue**: {tracks[0]}", silent=True)
+                await ctx.send(f"**Added to queue**: {track_name}", silent=True)
             elif len(self.queue) > 1:
                 await ctx.send(f"Added {len(tracks)} tracks to queue", silent=True)
 
@@ -114,7 +128,7 @@ class MusicPlayer(commands.Cog):
         voice_client = ctx.message.guild.voice_client
         if voice_client.is_playing():
             voice_client.stop()
-            self.pop_queue(ctx)
+            self.pop_queue()
             if len(self.queue) > 0:
                 await self.play_music(ctx)
         else:
@@ -155,7 +169,10 @@ class MusicPlayer(commands.Cog):
     async def loop(self, ctx):
         logger.info("User command: !loop")
         self.loop_queue = not self.loop_queue
-        await ctx.send(f"**Looping queue**: {self.loop_queue}", silent=True)
+        if self.loop_queue:
+            await ctx.send("Looping queue", silent=True)
+        else:
+            await ctx.send("Un-looping queue", silent=True)
 
     @commands.Cog.listener()
     async def on_voice_state_update(self, member, before, after):
@@ -203,16 +220,31 @@ class MusicPlayer(commands.Cog):
             if ctx.voice_client.is_paused():
                 break
             else:
-                self.pop_queue(ctx)
+                self.pop_queue()
                 await message.delete()
                 if len(self.queue) == 0:
                     logger.info("Music queue ended")
 
-    def pop_queue(self, ctx) -> None:
+    def pop_queue(self) -> None:
         if self.queue and len(self.queue) > 0:
             if self.loop_queue:
                 self.queue.append(self.queue[0])
             self.queue.pop(0)
+
+    def get_youtube_title(self, url: str) -> str:
+        logger.info("Getting YouTube video title...")
+        try:
+            response = requests.get(url)
+            soup = BeautifulSoup(response.text, "html.parser")
+            title = soup.find("title")
+            if title:
+                return title.text
+        except Exception as e:
+            logger.error(f"Error: {str(e)}")
+        return ""
+
+    def detect_walmart_yodel(self):
+        pass
 
 
 class Spotify:
