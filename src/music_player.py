@@ -140,6 +140,16 @@ class MusicPlayer(commands.Cog):
         else:
             await ctx.send("Queue is empty", silent=True)
 
+    @commands.command("queue", help="Shows the current queue")
+    async def show_queue(self, ctx):
+        logger.info("User command: !queue")
+        if len(self.queue) > 0:
+            queue = ""
+            for i, track in enumerate(self.queue):
+                if i != 0:
+                    queue += f"{i}. {track}\n"
+            await ctx.send(f"**Queue**:\n{queue}", silent=True)
+
     @commands.Cog.listener()
     async def on_voice_state_update(self, member, before, after):
         inactivity_limit = 30  # minutes of inactivity before bot disconnects
