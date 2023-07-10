@@ -1,5 +1,11 @@
 # Discord Bot
 
+Tired of the discord bots making their functionality premium after a certain time? I was too! So I created this custom
+discord bot with a music player, CS:GO and League of Legends utilities and more to come! Feel free to use it for your
+own server!
+
+PS: There are some hidden commands and easter eggs in the bot. Have fun finding them!
+
 # Table of Contents
 1. [Features](#features) 
 2. [Prerequisites](#prerequisites)
@@ -13,7 +19,7 @@
 ## Music Player
 ![](img/cmd_play.png)
 
-## CS:GO Buddy
+## CS:GO Utility
 
 ### Get lineups for a map
 ![](img/cmd_lineups.png)
@@ -29,7 +35,7 @@
 
 ## LoL Buddy
 
-### Get counter champions for a Leauge of Legends champion
+### Get counter champions for a League of Legends champion
 ![](img/cmd_counter.png)
 
 
