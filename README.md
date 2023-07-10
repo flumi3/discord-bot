@@ -17,26 +17,26 @@ PS: There are some hidden commands and easter eggs in the bot. Have fun finding 
 - [LoL Buddy](#lol-buddy)
 
 ## Music Player
-![](img/cmd_play.png)
+![](docs/img/cmd_play.png)
 
 ## CS:GO Utility
 
 ### Get lineups for a map
-![](img/cmd_lineups.png)
+![](docs/img/cmd_lineups.png)
 
 ### Get callouts for a map
-![](img/cmd_callouts.png)
+![](docs/img/cmd_callouts.png)
 
 ### Get the jumpthrow bind that you can paste into your console
-![](img/cmd_jumpthrow.png)
+![](docs/img/cmd_jumpthrow.png)
 
 ### Get the practice config that you can paste into your console
-![](img/cmd_practice.png)
+![](docs/img/cmd_practice.png)
 
 ## LoL Buddy
 
 ### Get counter champions for a League of Legends champion
-![](img/cmd_counter.png)
+![](docs/img/cmd_counter.png)
 
 
 # Prerequisites
