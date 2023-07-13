@@ -1,10 +1,10 @@
 # Discord Bot
 
-Tired of the discord bots making their functionality premium after a certain time? I was too! So I created this custom
-discord bot with a music player, CS:GO and League of Legends utilities and more to come! Feel free to use it for your
-own server!
+Tired of discord bots making their features premium or shutting down their services after a certain time? Me too!
+So I created this custom discord bot with a music player, CS:GO and League of Legends utilities and other cool stuff.
+Feel free to use it for your own server.
 
-PS: There are some hidden commands and easter eggs in the bot. Have fun finding them!
+PS: There are some hidden commands and easter eggs. Have fun finding them!
 
 # Table of Contents
 1. [Features](#features) 
@@ -19,7 +19,7 @@ PS: There are some hidden commands and easter eggs in the bot. Have fun finding 
 ## Music Player
 ![](docs/img/cmd_play.png)
 
-## CS:GO Utility
+## CS:GO Buddy
 
 ### Get lineups for a map
 ![](docs/img/cmd_lineups.png)
@@ -39,7 +39,9 @@ PS: There are some hidden commands and easter eggs in the bot. Have fun finding 
 ![](docs/img/cmd_counter.png)
 
 
-# Prerequisites
+# Installation
+
+## Prerequisites
 1. [Create a Discord Bot Account and invite the bot to your server](https://discordpy.readthedocs.io/en/stable/discord.html)
 2. Install Python3 and Pip3
     ```
