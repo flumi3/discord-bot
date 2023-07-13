@@ -40,28 +40,16 @@ class CsgoUtility(commands.Cog):
     @commands.command(name="practice", help="Sends a practice config that can be pasted into the console")
     async def send_practice_cfg(self, ctx):
         logger.info(f"User command: !practice")
-        cfg = """Copy and paste the following config into your console:
-        sv_cheats 1
-        mp_limitteams 0
-        mp_autoteambalance 0
-        mp_freezetime 0
-        mp_roundtime 60
-        mp_roundtime_defuse 60
-        mp_roundtime_hostage 60
-        mp_maxmoney 99999
-        mp_startmoney 99999
-        mp_buytime 9999
-        mp_buy_anywhere 1
-        ammo_grenade_limit_total 5
-        sv_infinite_ammo 1
-        bot_kick
-        mp_warmup_end
-        sv_grenade_trajectory 1
-        sv_grenade_trajectory_time 10
-        sv_showimpacts 1
-        sv_showimpacts_time 10
-        mp_restartgame 1
-        """
+        cfg = (
+            "**Server config:**\n"
+            "sv_cheats 1;bot_kick;mp_limitteams 0;mp_autoteambalance 0;mp_roundtime 60;mp_roundtime_defuse 60;"
+            "mp_freezetime 0;mp_warmup_end;ammo_grenade_limit_total 5;sv_infinite_ammo 1;mp_maxmoney 60000;"
+            "mp_startmoney 60000;mp_buytime 9999;mp_buy_anywhere 1\n\n"
+            "**Practice config:**\n"
+            "sv_grenade_trajectory 1;sv_grenade_trajectory_time 10;sv_showimpacts 1;sv_showimpacts_time 10;"
+            "give weapon_incgrenade;give weapon_flashbang;give weapon_smokegrenade;give weapon_molotov;"
+            "give weapon_decoy;give weapon_hegrenade"
+        )
         await ctx.send(cfg)
 
     @commands.command(name="callouts", help="Sends the callouts for a given CS:GO map")
