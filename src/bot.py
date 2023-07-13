@@ -5,7 +5,7 @@ import discord
 from dotenv import load_dotenv
 from discord.ext import commands
 from music_player import MusicPlayer
-from src.message_listener import MessageListener
+from message_listener import MessageListener
 from lol_buddy import LolBuddy
 from csgo_utility import CsgoUtility
 

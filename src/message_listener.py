@@ -19,6 +19,9 @@ class MessageListener(commands.Cog):
         with open(root_dir + "/data/p_urls.json", "r") as f:
             self.porn_gif_urls = json.load(f)
 
+        with open(root_dir + "/data/names.json", "r") as f:
+            self.names = json.load(f)
+
     @commands.Cog.listener()
     async def on_message(self, message):
         if message.author == self.bot.user:
@@ -32,3 +35,7 @@ class MessageListener(commands.Cog):
                 random_number = random.randint(0, len(self.porn_gif_urls) - 1)
                 url = self.porn_gif_urls[random_number]
                 await message.channel.send(url)
+
+        # Easter egg: if someone says a name from the names.json file, the bot will respond with "Stinkt"
+        elif message.content in self.names:
+            await message.channel.send("Stinkt")
