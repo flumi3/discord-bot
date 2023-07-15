@@ -55,6 +55,7 @@ class CsgoUtility(commands.Cog):
     @commands.command(name="callouts", help="Sends the callouts for a given CS:GO map")
     async def send_callouts(self, ctx, map: str):
         logger.info(f"User command: !callouts")
+        map = map.lower()
         if map == "vertigo":
             root_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
             callouts_dir = root_dir + "/data/csgo-callouts"
@@ -71,6 +72,7 @@ class CsgoUtility(commands.Cog):
             map (str): Map to get lineups for
         """
         logger.info(f"User command: !lineups {map}")
+        map = map.lower()
         if map in self.lineups_data:
             ct_lineups = self.lineups_data[map]["ct"]
             t_lineups = self.lineups_data[map]["t"]

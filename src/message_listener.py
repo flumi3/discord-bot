@@ -36,6 +36,6 @@ class MessageListener(commands.Cog):
                 url = self.porn_gif_urls[random_number]
                 await message.channel.send(url)
 
-        # Easter egg: if someone says a name from the names.json file, the bot will respond with "Stinkt"
+        # Easter egg: if someone says a name from the names.json file, the bot will respond with "stinkt"
         elif message.content in self.names:
-            await message.channel.send("Stinkt")
+            await message.channel.send("stinkt")

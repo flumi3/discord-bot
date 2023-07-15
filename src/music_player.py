@@ -165,7 +165,7 @@ class MusicPlayer(commands.Cog):
                     queue += f"{i}. {track}\n"
             await ctx.send(f"**Queue**:\n{queue}", silent=True)
 
-    @commands.command("loop", help="Loops the current song (or queue if not empty)")
+    @commands.command("loop", help="Enable/Disable loop")
     async def loop(self, ctx):
         logger.info("User command: !loop")
         self.loop_queue = not self.loop_queue
