@@ -21,7 +21,7 @@ class LogUtils(commands.Cog):
     def init_logging(self):
         """Initializes logging for the bot"""
         logger = logging.getLogger("discord")
-        logger.setLevel(logging.INFO)
+        logger.setLevel(logging.DEBUG)
         logging.getLogger("discord.http").setLevel(logging.INFO)
 
         # create log folder if not exists
