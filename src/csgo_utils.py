@@ -13,18 +13,17 @@ load_dotenv()
 class CsgoUtils(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+        self.root_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
         self.lineups_data = self.load_lineups()
         self.callout_maps = self.load_callout_maps()
 
     def load_lineups(self):
         # get root dir path
-        root_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-        with open(root_dir + "/data/csgo-lineups.json", "r") as f:
+        with open(self.root_dir + "/data/csgo-lineups.json", "r") as f:
             return json.load(f)
 
     def load_callout_maps(self) -> dict:
-        root_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-        callouts_dir = root_dir + "/data/csgo-callouts"
+        callouts_dir = self.root_dir + "/data/csgo-callouts"
         callouts = dict()
         for file in os.listdir(callouts_dir):
             name = file.split(".")[0]
@@ -57,8 +56,7 @@ class CsgoUtils(commands.Cog):
         logger.info(f"User command: !callouts")
         map = map.lower()
         if map == "vertigo":
-            root_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-            callouts_dir = root_dir + "/data/csgo-callouts"
+            callouts_dir = self.root_dir + "/data/csgo-callouts"
             await ctx.send(file=discord.File(callouts_dir + "/vertigo-upper.png"))
             await ctx.send(file=discord.File(callouts_dir + "/vertigo-lower.png"))
         if map in self.callout_maps:

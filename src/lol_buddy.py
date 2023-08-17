@@ -20,19 +20,40 @@ class LolBuddy(commands.Cog):
         Args:
             champion_name (str): Name of the champion to get counters for
         """
-        logger.info("User command: !counter")
+        logger.info(f"User {ctx.author} invoked command: !counter")
         url = f"https://op.gg/champions/{champion_name}"
         headers = {
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36"
         }
         logger.info(f"Fetching counters for {champion_name} from op.gg...")
-        response = requests.get(url, headers=headers)
 
-        if response.status_code != 200:
-            logger.error(f"Error fetching counters for {champion_name} from op.gg")
-            await ctx.send(f"Error fetching counters for {champion_name} from op.gg")
+        try:
+            response = requests.get(url, headers=headers)
+        except requests.exceptions.Timeout:
+            logger.error("Timeout fetching counters from op.gg. Retrying...")
+            for i in range(3):
+                try:
+                    response = requests.get(url, headers=headers)
+                except requests.exceptions.Timeout:
+                    logger.error("Timeout fetching counters from op.gg. Retrying...")
+                    if i == 2:
+                        logger.error("Timeout fetching counters from op.gg. Aborting...")
+                        await ctx.send("Timeout fetching counters from op.gg. Aborting...")
+                        return
+                    continue
+                else:
+                    break
+        except requests.exceptions.RequestException as e:
+            logger.error(f"Error fetching counters for {champion_name} from op.gg: {e}")
             return
-        soup = BeautifulSoup(response.text, "html.parser")
+        else:
+            if response.status_code != 200:
+                logger.error(f"Error fetching counters for {champion_name} from op.gg ({response.status_code})")
+                await ctx.send(f"Error fetching counters for {champion_name} from op.gg")
+                return
+
+        logger.debug("Successfully fetched counters from op.gg")
+        soup = BeautifulSoup(response.text, "html.parser")  # type: ignore
         # with open("opgg.html", "w", encoding="utf-8") as f:
         #     f.write(soup.prettify())
 

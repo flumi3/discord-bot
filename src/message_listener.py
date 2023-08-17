@@ -31,9 +31,11 @@ class MessageListener(commands.Cog):
         if message.content.startswith("pls "):
             query = message.content.split("pls ")[1]
             if query == "porn":
-                logger.info("User command: pls porn")
+                logger.info(f"User invoked command: pls porn")
+                logger.info("Selecting random URL to send...")
                 random_number = random.randint(0, len(self.porn_gif_urls) - 1)
                 url = self.porn_gif_urls[random_number]
+                logger.debug(f"Selected ULR: {url}")
                 await message.channel.send(url)
 
         # Easter egg: if someone says a name from the names.json file, the bot will respond with "stinkt"

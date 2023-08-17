@@ -36,7 +36,7 @@ class MusicPlayer(commands.Cog):
         Args:
             query (str): Song to play (link or name)
         """
-        logger.info(f"User command: !play {query}")
+        logger.info(f"User {ctx.author} invoked command: !play {query}")
 
         # Connect to voice channel
         if ctx.message.author.voice:
@@ -91,7 +91,7 @@ class MusicPlayer(commands.Cog):
 
     @commands.command(name="pause", help="Pauses the currently playing song")
     async def pause(self, ctx):
-        logger.info("User command: !pause")
+        logger.info(f"User {ctx.author} invoked command: !pause")
         voice_client = ctx.message.guild.voice_client
         if voice_client.is_playing():
             voice_client.pause()
@@ -101,7 +101,7 @@ class MusicPlayer(commands.Cog):
 
     @commands.command(name="resume", help="Resumes a currently paused song")
     async def resume(self, ctx):
-        logger.info("User command: !resume")
+        logger.info(f"User {ctx.author} invoked command: !resume")
         voice_client = ctx.message.guild.voice_client
         if voice_client.is_paused():
             voice_client.resume()
@@ -111,7 +111,7 @@ class MusicPlayer(commands.Cog):
 
     @commands.command("stop", help="Stops playing song and disconnects the bot from voice channel")
     async def stop(self, ctx):
-        logger.info("User command: !stop")
+        logger.info(f"User {ctx.author} invoked command: !stop")
         voice_client = ctx.message.guild.voice_client
         if voice_client.is_playing():
             if len(self.queue) > 0:
@@ -124,7 +124,7 @@ class MusicPlayer(commands.Cog):
 
     @commands.command(name="skip", help="Skips the currently playing song")
     async def skip(self, ctx):
-        logger.info("User command: !skip")
+        logger.info(f"User {ctx.author} invoked command: !skip")
         voice_client = ctx.message.guild.voice_client
         if voice_client.is_playing():
             voice_client.stop()
@@ -148,7 +148,7 @@ class MusicPlayer(commands.Cog):
 
     @commands.command("clear", help="Clears the music queue")
     async def clear_queue(self, ctx):
-        logger.info("User command: !clear")
+        logger.info(f"User {ctx.author} invoked command: !clear")
         if len(self.queue) > 0:
             self.queue.clear()
             await ctx.send("Queue cleared", silent=True)
@@ -157,7 +157,7 @@ class MusicPlayer(commands.Cog):
 
     @commands.command("queue", help="Shows the current queue")
     async def show_queue(self, ctx):
-        logger.info("User command: !queue")
+        logger.info(f"User {ctx.author} invoked command: !queue")
         if len(self.queue) > 0:
             queue = ""
             for i, track in enumerate(self.queue):
@@ -167,7 +167,7 @@ class MusicPlayer(commands.Cog):
 
     @commands.command("loop", help="Enable/Disable loop")
     async def loop(self, ctx):
-        logger.info("User command: !loop")
+        logger.info(f"User {ctx.author} invoked command: !loop")
         self.loop_queue = not self.loop_queue
         if self.loop_queue:
             await ctx.send("Looping queue", silent=True)
@@ -232,15 +232,16 @@ class MusicPlayer(commands.Cog):
             self.queue.pop(0)
 
     def get_youtube_title(self, url: str) -> str:
-        logger.info("Getting YouTube video title...")
+        logger.info(f"Fetchig YouTube video title for URL {url}...")
         try:
             response = requests.get(url)
             soup = BeautifulSoup(response.text, "html.parser")
             title = soup.find("title")
             if title:
+                logger.debug(f"Found title: {title.text}")
                 return title.text
         except Exception as e:
-            logger.error(f"Error: {str(e)}")
+            logger.error(f"Failed to fetch YouTube video title for URL {url}. Error: {str(e)}")
         return ""
 
     def detect_walmart_yodel(self):
@@ -310,6 +311,7 @@ class YouTubeDownloader(discord.PCMVolumeTransformer):
 
     @classmethod
     async def from_query(cls, query, *, loop=None):
+        logger.debug(f"Fetching YouTube video for query '{query}'...")
         loop = loop or asyncio.get_event_loop()
         format_options = {
             "format": "bestaudio/best",
