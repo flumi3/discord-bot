@@ -10,7 +10,7 @@ logger = logging.getLogger("discord")
 load_dotenv()
 
 
-class CsgoUtility(commands.Cog):
+class CsgoUtils(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.lineups_data = self.load_lineups()
