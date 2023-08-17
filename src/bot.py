@@ -8,6 +8,7 @@ from music_player import MusicPlayer
 from message_listener import MessageListener
 from lol_buddy import LolBuddy
 from csgo_utils import CsgoUtils
+from logging_utils import LogUtils
 
 load_dotenv()
 TOKEN = os.getenv("DISCORD_TOKEN")
@@ -28,6 +29,7 @@ async def init():
     await bot.add_cog(LolBuddy(bot))
     await bot.add_cog(MessageListener(bot))
     await bot.add_cog(CsgoUtils(bot))
+    await bot.add_cog(LogUtils(bot))
 
 
 if __name__ == "__main__":
