@@ -4,7 +4,7 @@ import os
 import json
 import requests
 
-amount = 2000
+amount = 6000
 filename = "./data/p_urls.json"
 print(f"[+] Updating NSFW gif URL list with {amount} URLs...")
 
@@ -41,8 +41,6 @@ def get_reddit_posts(subreddit: str, sort: str = "top", timeframe: str = "all", 
         posts.extend(r_content["data"]["children"])
         after = r_content["data"]["after"]  # used to get the next page of posts
         amount = amount - limit
-    # with open("./data/posts.json", "w") as f:
-    #     f.write(str(posts))
     print(f"Retrieved {len(posts)} posts.")
     return posts
 
@@ -50,7 +48,13 @@ def get_reddit_posts(subreddit: str, sort: str = "top", timeframe: str = "all", 
 posts = get_reddit_posts(subreddit="PornGifs", amount=amount)
 urls = list()
 error_count = 0
-not_gif_count = 0
+imgur_link_count = 0
+allowed_extensions = [
+    ".gif",
+    ".gifv",
+    ".mp4",
+    ".webm",
+]
 for post in posts:
     try:
         url = post["data"]["url"]
@@ -58,16 +62,16 @@ for post in posts:
         error_count += 1
         continue
     else:
-        if url.endswith(".gif") or url.endswith(".gifv"):
+        if "imgur" in url:
+            imgur_link_count += 1
+        elif url.endswith(tuple(allowed_extensions)):
             urls.append(url)
-        else:
-            not_gif_count += 1
 
 print(f"Found {len(posts) - error_count} URLs.")
 if error_count > 0:
     print(f"Failed to get {error_count} URLs.")
-if not_gif_count > 0:
-    print(f"URLs that were not a gif: {not_gif_count}")
+if imgur_link_count > 0:
+    print(f"Sorted out {imgur_link_count} imgur links.")
 
 os.makedirs(os.path.dirname(filename), exist_ok=True)
 with open(filename, "w") as f:
