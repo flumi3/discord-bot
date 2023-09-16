@@ -29,7 +29,10 @@ class MusicPlayer(commands.Cog):
         self.spotify = Spotify()
         self.loop_queue = False
 
-    @commands.command(name="play", help="Plays a song")
+    @commands.command(
+        name="play",
+        help="Plays a song",
+    )
     async def play(self, ctx, *, query: str):
         """Plays a song from YouTube or Spotify
 
@@ -67,18 +70,30 @@ class MusicPlayer(commands.Cog):
             self.queue.append(query)
             logger.info(f"Added '{query}' to queue")
 
-        # Easter Egg: Loop if the track is Walmart Yodeling Kid
+        # Get track name
         if "youtube.com" in query:
             track_name = self.get_youtube_title(query)
         else:
             track_name = tracks[0]
         track_name = track_name.lower()
+
+        # Easter egg: Loop if the track is Walmart Yodeling Kid
         if "kid" in track_name and "walmart" in track_name and "edm" in track_name:
             await ctx.send(
                 ":rotating_light: Walmart yodeling kid detected. Loop enabled :rotating_light:", silent=True
             )
             if not self.loop_queue:
                 self.loop_queue = True
+
+        # Easter egg: Send Money Boy image if track is with Money Boy
+        if "money boy" in track_name:
+            root_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+            folder_path = root_dir + "/data/moneyboy-img"
+            all_items = os.listdir(folder_path)
+            files = [item for item in all_items if os.path.isfile(os.path.join(folder_path, item))]
+            file = random.choice(files)
+            file_path = os.path.join(folder_path, file)
+            await ctx.send(file=discord.File(file_path), silent=True)
 
         # Play music
         if not ctx.voice_client.is_playing():
@@ -175,7 +190,14 @@ class MusicPlayer(commands.Cog):
             await ctx.send("Un-looping queue", silent=True)
 
     @commands.Cog.listener()
-    async def on_voice_state_update(self, member, before, after):
+    async def on_voice_state_update(self, member, before, after) -> None:
+        """Disconnect bot from voice channel after a certain amount of inactivity
+
+        Args:
+            member (discord.Member): Member that changed voice state
+            before (discord.VoiceState): Voice state before change
+            after (discord.VoiceState): Voice state after change
+        """
         inactivity_limit = 30  # minutes of inactivity before bot disconnects
         inactivity_counter = 0  # in minutes
 
@@ -243,9 +265,6 @@ class MusicPlayer(commands.Cog):
         except Exception as e:
             logger.error(f"Failed to fetch YouTube video title for URL {url}. Error: {str(e)}")
         return ""
-
-    def detect_walmart_yodel(self):
-        pass
 
 
 class Spotify:
