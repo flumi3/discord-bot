@@ -49,6 +49,8 @@ posts = get_reddit_posts(subreddit="PornGifs", amount=amount)
 urls = list()
 error_count = 0
 imgur_link_count = 0
+tumblr_link_count = 0
+unallowed_extension_count = 0
 allowed_extensions = [
     ".gif",
     ".gifv",
@@ -64,14 +66,22 @@ for post in posts:
     else:
         if "imgur" in url:
             imgur_link_count += 1
+        elif "tumblr" in url:
+            tumblr_link_count += 1
         elif url.endswith(tuple(allowed_extensions)):
             urls.append(url)
+        else:
+            unallowed_extension_count += 1
 
 print(f"Found {len(posts) - error_count} URLs.")
 if error_count > 0:
     print(f"Failed to get {error_count} URLs.")
 if imgur_link_count > 0:
     print(f"Sorted out {imgur_link_count} imgur links.")
+if tumblr_link_count > 0:
+    print(f"Sorted out {tumblr_link_count} tumblr links.")
+if unallowed_extension_count > 0:
+    print(f"Sorted out {unallowed_extension_count} URLs with unallowed file extensions.")
 
 os.makedirs(os.path.dirname(filename), exist_ok=True)
 with open(filename, "w") as f:
