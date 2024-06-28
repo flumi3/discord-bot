@@ -1,6 +1,7 @@
 import discord
 import requests
 import logging
+import json
 import re
 
 from bs4 import BeautifulSoup
@@ -29,6 +30,7 @@ class LolBuddy(commands.Cog):
 
         try:
             response = requests.get(url, headers=headers)
+            response.raise_for_status()
         except requests.exceptions.Timeout:
             logger.error("Timeout fetching counters from op.gg. Retrying...")
             for i in range(3):
@@ -43,33 +45,34 @@ class LolBuddy(commands.Cog):
                     continue
                 else:
                     break
-        except requests.exceptions.RequestException as e:
+        except requests.HTTPError as e:
             logger.error(f"Error fetching counters for {champion_name} from op.gg: {e}")
+            await ctx.send(f"Error fetching counters for {champion_name} from op.gg. Use !logs to see whats going on.")
             return
         else:
-            if response.status_code != 200:
-                logger.error(f"Error fetching counters for {champion_name} from op.gg ({response.status_code})")
-                await ctx.send(f"Error fetching counters for {champion_name} from op.gg")
-                return
+            logger.info("Success.")
 
-        logger.debug("Successfully fetched counters from op.gg")
+        logger.info("Successfully fetched counters from op.gg")
         soup = BeautifulSoup(response.text, "html.parser")  # type: ignore
+
+        # Uncomment to print html to file for debugging
         # with open("opgg.html", "w", encoding="utf-8") as f:
         #     f.write(soup.prettify())
 
-        regex = re.compile(r"target_champion=(?P<champion_name>\D+)\">")
-        weak_against_html = soup.find_all(class_="css-17rk1u8 eesz9tm3")  # all counter elements have this classname
-        weak_against = regex.findall(str(weak_against_html))
-        weak_against = [champion_name.capitalize() for champion_name in weak_against]
-        logger.debug(f"Found {len(weak_against)} 'weak against' counters for {champion_name}")
+        # Get script tag that holds all the relevant JSON data
+        script_tag = soup.find("script", id="__NEXT_DATA__", type="application/json")
+        json_data = script_tag.string  # Extract the JSON string from the tag
+        data_dict = json.loads(json_data)  # Parse the JSON string into a Python dictionary
+        counters_data = data_dict["props"]["pageProps"]["data"]["summary"]["opponents"]
 
-        strong_against_html = soup.find_all(class_="css-1syqaij eesz9tm3")  # same as above
-        strong_against = regex.findall(str(strong_against_html))
-        strong_against = [champion_name.capitalize() for champion_name in strong_against]
-        logger.debug(f"Found {len(strong_against)} 'strong against' counters for {champion_name}")
+        # Extract champion names from the opponents dict
+        weak_against_champion_names = [counter["meta"]["name"] for counter in counters_data[0]]
+        strong_against_champion_names = [counter["meta"]["name"] for counter in counters_data[1]]
+        logger.info(f"Found {len(weak_against_champion_names)} 'weak against' counters for {champion_name}")
+        logger.info(f"Found {len(strong_against_champion_names)} 'strong against' counters for {champion_name}")
 
         embed = discord.Embed(title=f"Counters for {champion_name.capitalize()}", color=0x00FF00)
-        embed.add_field(name="Weak Against", value="\n".join(weak_against), inline=True)
-        embed.add_field(name="Strong Against", value="\n".join(strong_against), inline=True)
+        embed.add_field(name="Weak Against", value="\n".join(weak_against_champion_names), inline=True)
+        embed.add_field(name="Strong Against", value="\n".join(strong_against_champion_names), inline=True)
 
         await ctx.send(embed=embed)

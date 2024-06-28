@@ -1,11 +1,5 @@
 # Discord Bot
 
-Tired of discord bots making their features premium or shutting down their services after a certain time? Me too!
-So I created this custom discord bot with a music player, CS:GO and League of Legends utilities and other cool stuff.
-Feel free to use it for your own server.
-
-PS: There are some hidden commands and easter eggs. Have fun finding them!
-
 # Table of Contents
 1. [Features](#features) 
 2. [Prerequisites](#prerequisites)
