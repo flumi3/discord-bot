@@ -342,6 +342,8 @@ class YouTubeDownloader(discord.PCMVolumeTransformer):
             "nowarnings": True,
             "ignoreerrors": True,
             "source_address": "0.0.0.0",
+            "username": "flumii12",
+            "password": "getKey(gmail1);"
         }
         ffmpeg_options = {
             "options": "-vn",
