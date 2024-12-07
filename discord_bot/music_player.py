@@ -332,17 +332,18 @@ class YouTubeDownloader(discord.PCMVolumeTransformer):
     async def from_query(cls, query, *, loop=None):
         logger.debug(f"Fetching YouTube video for query '{query}'...")
         loop = loop or asyncio.get_event_loop()
-        format_options = {
+        ytl_options = {
             "format": "bestaudio/best",
             "noplaylist": True,
-            "quiet": True,
             "default_search": "auto",
             "nocheckcertificate": True,
             "logtostderr": False,
             "nowarnings": True,
             "ignoreerrors": True,
             "source_address": "0.0.0.0",
-            "cookiefile": "cookies.txt"
+            "cookiefile": "cookies.txt",
+            "verbose": True,
+            "quiet": False,
         }
         ffmpeg_options = {
             "options": "-vn",
@@ -350,7 +351,7 @@ class YouTubeDownloader(discord.PCMVolumeTransformer):
         }
 
         data = await loop.run_in_executor(
-            None, lambda: youtube_dl.YoutubeDL(format_options).extract_info(query, download=False)
+            None, lambda: youtube_dl.YoutubeDL(ytl_options).extract_info(query, download=False)
         )
         if "entries" in data:  # type: ignore
             data = data["entries"][0]  # type: ignore
