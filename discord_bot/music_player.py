@@ -332,6 +332,12 @@ class YouTubeDownloader(discord.PCMVolumeTransformer):
     async def from_query(cls, query, *, loop=None):
         logger.debug(f"Fetching YouTube video for query '{query}'...")
         loop = loop or asyncio.get_event_loop()
+        
+        # Create absolute path to cookie file
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        root_dir = os.path.dirname(os.path.dirname(current_dir))
+        cookiefile_path = os.path.join(root_dir, 'cookies.txt')
+
         ytl_options = {
             "format": "bestaudio/best",
             "noplaylist": True,
@@ -341,7 +347,7 @@ class YouTubeDownloader(discord.PCMVolumeTransformer):
             "nowarnings": True,
             "ignoreerrors": True,
             "source_address": "0.0.0.0",
-            "cookiefile": "cookies.txt",
+            "cookiefile": "cookiefile_path",
             "verbose": False,
             "quiet": True,
         }
