@@ -342,8 +342,8 @@ class YouTubeDownloader(discord.PCMVolumeTransformer):
             "ignoreerrors": True,
             "source_address": "0.0.0.0",
             "cookiefile": "cookies.txt",
-            "verbose": True,
-            "quiet": False,
+            "verbose": False,
+            "quiet": True,
         }
         ffmpeg_options = {
             "options": "-vn",
