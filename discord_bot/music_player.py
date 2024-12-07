@@ -347,7 +347,7 @@ class YouTubeDownloader(discord.PCMVolumeTransformer):
             "nowarnings": True,
             "ignoreerrors": True,
             "source_address": "0.0.0.0",
-            "cookiefile": "cookiefile_path",
+            "cookiefile": cookiefile_path,
             "verbose": False,
             "quiet": True,
         }
