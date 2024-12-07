@@ -1,16 +1,30 @@
 # Discord Bot
 
-TODO: TOC
+- [Features](#features)
+  - [Music Player](#music-player)
+  - [LoL Buddy](#lol-buddy)
+  - [CS:GO Buddy](#csgo-buddy)
+- [Getting Started](#getting-started)
+  - [Exporting YouTube cookies for authentication](#exporting-youtube-cookies-for-authentication)
+  - [Installing and configuring the bot](#installing-and-configuring-the-bot)
+  - [Running the project](#running-the-project)
+  - [(Optional) Create a CronJob](#optional-create-a-cronjob)
 
 ## Features
 
 - [Music Player](#music-player)
-- [CS:GO Buddy](#csgo-buddy)
 - [LoL Buddy](#lol-buddy)
+- [CS:GO Buddy](#csgo-buddy)
 
 ### Music Player
 
 ![cmd_play](docs/img/cmd_play.png)
+
+### LoL Buddy
+
+#### Get counter champions for a League of Legends champion
+
+![cmd_counter](docs/img/cmd_counter.png)
 
 ### CS:GO Buddy
 
@@ -32,12 +46,6 @@ TODO: TOC
 #### Get the practice config that you can paste into your console
 
 ![cmd_practice](docs/img/cmd_practice.png)
-
-### LoL Buddy
-
-### Get counter champions for a League of Legends champion
-
-![cmd_counter](docs/img/cmd_counter.png)
 
 ## Getting Started
 
