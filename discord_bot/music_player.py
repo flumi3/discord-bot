@@ -335,7 +335,7 @@ class YouTubeDownloader(discord.PCMVolumeTransformer):
         
         # Create absolute path to cookie file
         root_dir = os.path.dirname(os.path.abspath(__file__))
-        cookiefile_path = os.path.join(root_dir, 'cookies.txt')
+        cookiefile_path = os.path.join(root_dir, "..", 'cookies.txt')
         print(cookiefile_path)
 
         ytl_options = {
