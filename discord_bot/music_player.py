@@ -334,10 +334,10 @@ class YouTubeDownloader(discord.PCMVolumeTransformer):
         loop = loop or asyncio.get_event_loop()
         
         # Create absolute path to cookie file
-        root_dir = os.path.dirname(os.path.abspath(__file__))
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        root_dir = os.path.dirname(os.path.dirname(current_dir))
         cookiefile_path = os.path.join(root_dir, 'cookies.txt')
         print(cookiefile_path)
-        logger.debug(f"Locating cookie file at {cookiefile_path}...")
 
         ytl_options = {
             "format": "bestaudio/best",
