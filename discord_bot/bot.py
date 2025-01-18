@@ -4,11 +4,11 @@ import discord
 
 from dotenv import load_dotenv
 from discord.ext import commands
-from music_player import MusicPlayer
-from message_listener import MessageListener
-from lol_buddy import LolBuddy
-from csgo_utils import CsgoUtils
-from logging_utils import LogUtils
+from discord_bot.music_player import MusicPlayer
+from discord_bot.message_listener import MessageListener
+from discord_bot.lol_buddy import LolBuddy
+from discord_bot.csgo_utils import CsgoUtils
+from discord_bot.logging_utils import LogUtils
 
 load_dotenv()
 TOKEN = os.getenv("DISCORD_TOKEN")
