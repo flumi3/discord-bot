@@ -12,10 +12,6 @@
 
 ## Features
 
-- [Music Player](#music-player)
-- [LoL Buddy](#lol-buddy)
-- [CS:GO Buddy](#csgo-buddy)
-
 ### Music Player
 
 ![cmd_play](docs/img/cmd_play.png)
@@ -157,7 +153,9 @@ following commands from within the discord bot repository:
 5. **Add a Cronjob to use Poetry's environment on startup**:
 
    ```bash
-   @reboot python3 /home/ubuntu/discord-bot/discord_bot/bot.py &
+   @reboot PYTHONPATH=/home/ubuntu/discord-bot:$PYTHONPATH python3 /home/ubuntu/discord-bot/discord_bot/bot.py &
    ```
+
+   > :memo: **Note**: Make sure to adjust the path if your discord bot is in a different location.
 
 6. **Test**: Reboot the VM and see if the Discord bot starts up automatically.
