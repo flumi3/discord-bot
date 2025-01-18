@@ -35,7 +35,7 @@ typing-extensions = "4.12.2"
 urllib3 = "2.2.3"
 websockets = "13.1"
 yarl = "1.13.1"
-yt-dlp = "2024.11.4"
+yt-dlp = "2025.1.15"
 
 
 [build-system]
